@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: openai-codereview-zqiusu-test-app
+  profiles:
+    active: dev
