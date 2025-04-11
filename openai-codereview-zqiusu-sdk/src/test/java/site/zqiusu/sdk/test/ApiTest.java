@@ -31,5 +31,6 @@ public class ApiTest {
     @Test
     public void http_test() throws IOException {
         System.out.println("aaaa");
+        System.out.println("bbbb");
     }
 }
