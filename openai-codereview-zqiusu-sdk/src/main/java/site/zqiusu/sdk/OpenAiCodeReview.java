@@ -1,6 +1,9 @@
 package site.zqiusu.sdk;
 
 import com.alibaba.fastjson2.JSON;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import site.zqiusu.sdk.model.ChatCompletionRequest;
 import site.zqiusu.sdk.model.ChatCompletionSyncResponse;
 import site.zqiusu.sdk.model.Model;
@@ -10,7 +13,11 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
+import java.util.logging.SimpleFormatter;
 
 
 public class OpenAiCodeReview {
@@ -41,6 +48,38 @@ public class OpenAiCodeReview {
 
     }
 
+    public static String writeLog(String token,String log) throws Exception {
+        //1.克隆github仓库到本地仓库
+        Git.cloneRepository()
+                .setURI("").setDirectory(new File("repo"))
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""))
+                .call();
+
+        //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
+        String dateFolder = new SimpleDateFormat("yyyy-mm-dd").format(new Date());
+
+        //3.生成随机文件名，创建文件
+        String fileName = generateFileName(12)+".md";
+        //file的第一个入参是父文件夹，第二个入参是子文件
+        File file = new File(dateFolder,fileName);
+        //try后（）里的内容声明需要自动关闭的资源
+        try (FileWriter fileWriter = new FileWriter(file)){
+
+        }
+        return "";
+    }
+
+    private static String generateFileName(int length) {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            stringBuilder.append(characters.charAt(random.nextInt(characters.length())));
+        }
+        return stringBuilder.toString();
+
+    }
+
     private static String codeReview(String diffCode)throws Exception{
         String apiSecret = "9b454e3977beb45e1a747e1d2605d7c1.2oyyDnaQrhqtEUVM";
         String token = BearerTokenUtils.getToken(apiSecret);
@@ -54,16 +93,7 @@ public class OpenAiCodeReview {
         connection.setRequestProperty("User-Agent","Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
         connection.setDoOutput(true);
 
-//
-//        String jsonInpuString = "{"
-//                + "\"model\":\"glm-4-flash\","
-//                + "\"messages\": ["
-//                + "    {"
-//                + "        \"role\": \"user\","
-//                + "        \"content\": \"你是一个高级编程架构师，精通各类场景方案、架构设计和编程语言请，请您根据git diff记录，对代码做出评审。代码为: " + diffCode + "\""
-//                + "    }"
-//                + "]"
-//                + "}";
+
 
         ChatCompletionRequest chatCompletionRequest = new ChatCompletionRequest();
         chatCompletionRequest.setModel(Model.GLM_4_FLASH.getCode());
