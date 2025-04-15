@@ -66,14 +66,14 @@ public class OpenAiCodeReview {
 
         //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
         String FolderName = new SimpleDateFormat("yyyy-mm-dd").format(new Date());
-        File Folder = new File("repo/",FolderName);        //file的第一个入参是父文件夹，第二个入参是子文件
+        File Folder = new File("repo/"+FolderName);
         if (!Folder.exists()) {
             Folder.mkdirs();
         }
 
         //3.生成随机文件名，创建文件
         String fileName = generateFileName(12)+".md";
-        File file = new File(FolderName,fileName);
+        File file = new File(Folder,fileName);//file的第一个入参是父文件夹，第二个入参是子文件
         try (FileWriter writer = new FileWriter(file)){  //try后（）里的内容声明需要自动关闭的资源
             writer.write(log);
         }
