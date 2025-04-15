@@ -2,7 +2,6 @@ package site.zqiusu.sdk;
 
 import com.alibaba.fastjson2.JSON;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import site.zqiusu.sdk.model.ChatCompletionRequest;
 import site.zqiusu.sdk.model.ChatCompletionSyncResponse;
@@ -17,12 +16,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
-import java.util.logging.SimpleFormatter;
 
 
 public class OpenAiCodeReview {
     public static void main(String[] args) throws Exception {
-        System.out.println("测试执行");
+        System.out.println("openai 代码评审，测试执行");
+
+        String token = System.getenv("GITHUB_TOKEN");
+        if (null == token || token.isEmpty()) {
+            throw new RuntimeException("token is null");
+        }
 
         //1.代码检出
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD~1", "HEAD");
@@ -46,29 +49,45 @@ public class OpenAiCodeReview {
         String log = codeReview(diffCode.toString());
         System.out.println("评审结果 ："+log);
 
+        writeLog(token,log);
+
     }
 
+    //写日志
     public static String writeLog(String token,String log) throws Exception {
         //1.克隆github仓库到本地仓库
-        Git.cloneRepository()
-                .setURI("").setDirectory(new File("repo"))
+        Git git = Git.cloneRepository()
+                .setURI("https://github.com/ZQIUSU/openai-codereview-log.git")
+                .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""))
                 .call();
 
         //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
-        String dateFolder = new SimpleDateFormat("yyyy-mm-dd").format(new Date());
+        String FolderName = new SimpleDateFormat("yyyy-mm-dd").format(new Date());
 
         //3.生成随机文件名，创建文件
         String fileName = generateFileName(12)+".md";
         //file的第一个入参是父文件夹，第二个入参是子文件
-        File file = new File(dateFolder,fileName);
+        File file = new File(FolderName,fileName);
         //try后（）里的内容声明需要自动关闭的资源
-        try (FileWriter fileWriter = new FileWriter(file)){
-
+        try (FileWriter writer = new FileWriter(file)){
+            writer.write(log);
         }
-        return "";
+        //这里git操作后的add，addFilepattern都是在配置，call是链式调用api的执行操作
+        //将新文件添加到git仓库，并推送到远程
+        git.add().addFilepattern(FolderName +"/"+fileName).call();
+        git.commit().setMessage("Add new log file").call();
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""));
+
+
+        System.out.println("Create log file successfully!");
+
+
+
+        return "https://github.com/ZQIUSU/openai-codereview.git/";
     }
 
+    //生成文件名
     private static String generateFileName(int length) {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Random random = new Random();
@@ -80,6 +99,7 @@ public class OpenAiCodeReview {
 
     }
 
+    //代码审计
     private static String codeReview(String diffCode)throws Exception{
         String apiSecret = "9b454e3977beb45e1a747e1d2605d7c1.2oyyDnaQrhqtEUVM";
         String token = BearerTokenUtils.getToken(apiSecret);
@@ -94,7 +114,6 @@ public class OpenAiCodeReview {
         connection.setDoOutput(true);
 
 
-
         ChatCompletionRequest chatCompletionRequest = new ChatCompletionRequest();
         chatCompletionRequest.setModel(Model.GLM_4_FLASH.getCode());
         chatCompletionRequest.setMessages(new ArrayList<ChatCompletionRequest.Prompt>() {
@@ -107,7 +126,6 @@ public class OpenAiCodeReview {
 
 
         try(OutputStream os = connection.getOutputStream()){
-//            byte[] input = jsonInpuString.getBytes(StandardCharsets.UTF_8);
             byte[] input = JSON.toJSONString(chatCompletionRequest).getBytes(StandardCharsets.UTF_8);
             os.write(input);
         }
