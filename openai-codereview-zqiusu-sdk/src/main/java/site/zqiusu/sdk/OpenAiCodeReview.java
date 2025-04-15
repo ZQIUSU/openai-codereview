@@ -83,14 +83,14 @@ public class OpenAiCodeReview {
         //4.将新文件添加到git仓库，并推送到远程
         git.add().addFilepattern(FolderName +"/"+fileName).call();//这里git操作后的add，addFilepattern都是在配置，call是链式调用api的执行操作
         git.commit().setMessage("Add new log file").call();
-        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""));
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,"")).call();
 
 
         System.out.println("Create log file successfully!");
 
 
 
-        return "https://github.com/ZQIUSU/openai-codereview.git/";
+        return "https://github.com/ZQIUSU/openai-codereview-log/";
     }
 
     //生成文件名
