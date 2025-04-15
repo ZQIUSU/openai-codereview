@@ -65,7 +65,7 @@ public class OpenAiCodeReview {
                 .call();
 
         //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
-        String FolderName = new SimpleDateFormat("yyyy-mm-dd").format(new Date());
+        String FolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); //这里要用大写MM表示月，小写mm表示分钟
         File Folder = new File("repo/"+FolderName);
         if (!Folder.exists()) {
             Folder.mkdirs();
@@ -105,7 +105,7 @@ public class OpenAiCodeReview {
 
     }
 
-    //代码审计
+    //代码审计,调用chatglm-4-flash免费接口
     private static String codeReview(String diffCode)throws Exception{
         String apiSecret = "9b454e3977beb45e1a747e1d2605d7c1.2oyyDnaQrhqtEUVM";
         String token = BearerTokenUtils.getToken(apiSecret);
