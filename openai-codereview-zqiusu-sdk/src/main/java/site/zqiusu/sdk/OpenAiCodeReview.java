@@ -39,6 +39,7 @@ public class OpenAiCodeReview {
         StringBuilder diffCode = new StringBuilder();
         while ((line = reader.readLine()) != null) {
             diffCode.append(line);
+            diffCode.append("\n");
         }
 
         int exitCode = process.waitFor();
@@ -49,7 +50,8 @@ public class OpenAiCodeReview {
         String log = codeReview(diffCode.toString());
         System.out.println("评审结果 ："+log);
 
-        writeLog(token,log);
+        String url = writeLog(token, log);
+        System.out.println(url);
 
     }
 
