@@ -64,18 +64,22 @@ public class OpenAiCodeReview {
 
         //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
         String FolderName = new SimpleDateFormat("yyyy-mm-dd").format(new Date());
+        File Folder = new File("repo/",FolderName);        //file的第一个入参是父文件夹，第二个入参是子文件
+        if (!Folder.exists()) {
+            Folder.mkdirs();
+        }
 
         //3.生成随机文件名，创建文件
         String fileName = generateFileName(12)+".md";
-        //file的第一个入参是父文件夹，第二个入参是子文件
         File file = new File(FolderName,fileName);
-        //try后（）里的内容声明需要自动关闭的资源
-        try (FileWriter writer = new FileWriter(file)){
+        try (FileWriter writer = new FileWriter(file)){  //try后（）里的内容声明需要自动关闭的资源
             writer.write(log);
         }
-        //这里git操作后的add，addFilepattern都是在配置，call是链式调用api的执行操作
-        //将新文件添加到git仓库，并推送到远程
-        git.add().addFilepattern(FolderName +"/"+fileName).call();
+
+
+
+        //4.将新文件添加到git仓库，并推送到远程
+        git.add().addFilepattern(FolderName +"/"+fileName).call();//这里git操作后的add，addFilepattern都是在配置，call是链式调用api的执行操作
         git.commit().setMessage("Add new log file").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""));
 
