@@ -1,6 +1,5 @@
 package site.zqiusu.sdk.template;
 
-import com.sun.xml.internal.ws.util.xml.CDATA;
 import lombok.Data;
 
 import java.util.HashMap;
