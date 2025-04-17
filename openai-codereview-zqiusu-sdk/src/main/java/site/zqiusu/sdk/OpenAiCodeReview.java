@@ -67,6 +67,7 @@ public class OpenAiCodeReview {
         Message message = new Message();
         message.put("time", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         message.put("message",url);
+        message.setUrl(url);
 
         String weixinurl = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
         sendPostRequest(weixinurl, JSON.toJSONString(message));
