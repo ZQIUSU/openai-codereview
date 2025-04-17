@@ -106,7 +106,7 @@ public class OpenAiCodeReview {
         Git git = Git.cloneRepository()
                 .setURI("https://github.com/ZQIUSU/openai-codereview-log.git")
                 .setDirectory(new File("repo"))
-                .setCredentialsProvider(new UsernamePasswordCredentialsProvider(token,""))
+                .setCredentialsProvider(new UsernamePasswordCredentialsProvider("ZQIUSU",token))
                 .call();
 
         //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
