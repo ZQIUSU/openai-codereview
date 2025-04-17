@@ -6,6 +6,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import site.zqiusu.sdk.model.ChatCompletionRequest;
 import site.zqiusu.sdk.model.ChatCompletionSyncResponse;
 import site.zqiusu.sdk.model.Model;
+import site.zqiusu.sdk.template.Message;
 import site.zqiusu.sdk.types.utils.BearerTokenUtils;
 
 import java.io.*;
@@ -16,10 +17,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
+import java.util.Scanner;
+
+import static site.zqiusu.sdk.types.utils.WXAccessTokenUtils.getAccessToken;
 
 
 public class OpenAiCodeReview {
     public static void main(String[] args) throws Exception {
+
         System.out.println("openai 代码评审，测试执行");
 
         String token = System.getenv("GITHUB_TOKEN");
@@ -47,16 +52,55 @@ public class OpenAiCodeReview {
 
         System.out.println("评审代码：" + diffCode.toString());
 
+        //2.代码评审
         String log = codeReview(diffCode.toString());
         System.out.println("评审结果 ："+log);
 
+        //3.写入日志
         String url = writeLog(token, log);
-        System.out.println(url);
 
+
+        //4.微信公众号推送
+        String accessToken = getAccessToken();
+        System.out.println(accessToken);
+
+        Message message = new Message();
+        message.put("time", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        message.put("message",url);
+
+        String weixinurl = String.format("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s", accessToken);
+        sendPostRequest(weixinurl, JSON.toJSONString(message));
+
+
+    }
+
+
+    private static void sendPostRequest(String urlString, String jsonBody) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8");
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+
+            try (Scanner scanner = new Scanner(conn.getInputStream(), StandardCharsets.UTF_8.name())) {
+                String response = scanner.useDelimiter("\\A").next();
+                System.out.println(response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //写日志
     public static String writeLog(String token,String log) throws Exception {
+
         //1.克隆github仓库到本地仓库
         Git git = Git.cloneRepository()
                 .setURI("https://github.com/ZQIUSU/openai-codereview-log.git")
@@ -90,7 +134,7 @@ public class OpenAiCodeReview {
 
 
 
-        return "https://github.com/ZQIUSU/openai-codereview-log/";
+        return "https://github.com/ZQIUSU/openai-codereview-log/tree/main/" + FolderName + "/" + fileName;
     }
 
     //生成文件名
