@@ -29,7 +29,7 @@ public class OpenAiCodeReview {
 
         String token = System.getenv("GITHUB_TOKEN");
         if (null == token || token.isEmpty()) {
-            throw new RuntimeException("token is null");
+//            throw new RuntimeException("token is null");
         }
 
         //1.代码检出
@@ -110,7 +110,7 @@ public class OpenAiCodeReview {
 
         //2.获取当前日期，并创建文件夹,注意java.util.Date是java7之前的包，不是线程安全的，最好用java8的java.time包
         String FolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date()); //这里要用大写MM表示月，小写mm表示分钟
-        File Folder = new File("repo/"+FolderName);
+        File Folder = new File("repo/"+FolderName);//File对线是一个抽象表示，new File()只会创建这样一个对象，并不会写入磁盘
         if (!Folder.exists()) {
             Folder.mkdirs();
         }
