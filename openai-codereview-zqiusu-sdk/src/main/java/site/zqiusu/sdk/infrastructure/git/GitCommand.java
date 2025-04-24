@@ -8,24 +8,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Data
 public class GitCommand {
+    //日志
     private final Logger logger = LoggerFactory.getLogger(GitCommand.class);
-
+    //log项目的url
     private final String githubReviewLogUri;
-
+    //github action的token
     private final String githubToken;
-
+    //项目名称
     private final String project;
-
+    //分支名称
     private final String branch;
-
+    //作者
     private final String author;
-
+    //消息
     private final String message;
 
     //检出代码

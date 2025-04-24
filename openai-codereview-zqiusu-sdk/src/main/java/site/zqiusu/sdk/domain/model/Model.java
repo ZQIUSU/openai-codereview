@@ -1,4 +1,4 @@
-package site.zqiusu.sdk.model;
+package site.zqiusu.sdk.domain.model;
 
 public enum Model {
 
