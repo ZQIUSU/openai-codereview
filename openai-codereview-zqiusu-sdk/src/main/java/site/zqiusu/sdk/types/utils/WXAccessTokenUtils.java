@@ -1,6 +1,7 @@
 package site.zqiusu.sdk.types.utils;
 
 import com.alibaba.fastjson2.JSON;
+import lombok.Data;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -20,22 +21,20 @@ public class WXAccessTokenUtils {
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            int responseCode = connection.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
 
-            if(responseCode == HttpURLConnection.HTTP_OK){
+            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 String line;
-                StringBuilder builder = new StringBuilder();
+                StringBuilder sb = new StringBuilder();
 
                 while ((line = in.readLine()) != null){
-                    builder.append(line);
+                    sb.append(line);
                 }
                 in.close();
 
 
-                System.out.println("response: "+builder);
-                Token token = JSON.parseObject(builder.toString(), Token.class);
+                System.out.println("response: "+sb);
+                Token token = JSON.parseObject(sb.toString(), Token.class);
                 return token.getAccess_token();
             }else {
                 System.out.println("GET request failed");
@@ -48,24 +47,9 @@ public class WXAccessTokenUtils {
         }
     }
 
+    @Data
     public static class Token {
         private String access_token;
         private Integer expires_in;
-
-        public String getAccess_token() {
-            return access_token;
-        }
-
-        public void setAccess_token(String access_token) {
-            this.access_token = access_token;
-        }
-
-        public Integer getExpires_in() {
-            return expires_in;
-        }
-
-        public void setExpires_in(Integer expires_in) {
-            this.expires_in = expires_in;
-        }
     }
 }

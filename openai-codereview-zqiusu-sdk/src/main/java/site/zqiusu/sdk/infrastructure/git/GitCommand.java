@@ -17,7 +17,7 @@ public class GitCommand {
     private final Logger logger = LoggerFactory.getLogger(GitCommand.class);
     //log项目的url
     private final String githubReviewLogUri;
-    //github action的token
+    //gitHub action的token
     private final String githubToken;
     //项目名称
     private final String project;
@@ -63,7 +63,7 @@ public class GitCommand {
     //提交并推送
     public String commitAndPush(String recommend) throws GitAPIException, IOException {
         Git git = Git.cloneRepository()
-                .setURI("https://github.com/ZQIUSU/openai-codereview-log.git")
+                .setURI(githubReviewLogUri)
                 .setDirectory(new File("."))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,""))
                 .call();
@@ -88,6 +88,6 @@ public class GitCommand {
 
         logger.info("openai-code-review git commit and push done! {}", fileName);
 
-        return githubReviewLogUri + "/blob/master/" + dateFolderName + "/" + fileName;
+        return githubReviewLogUri + "/tree/main/" + dateFolderName + "/" + fileName;
     }
 }
