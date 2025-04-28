@@ -73,7 +73,7 @@ public class GitCommand {
     public String commitAndPush(String recommend) throws GitAPIException, IOException {
         Git git = Git.cloneRepository()
                 .setURI(githubReviewLogUri+".git")
-                .setDirectory(new File("."))
+                .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,""))
                 .call();
 
