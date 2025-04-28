@@ -39,7 +39,7 @@ public class GitCommand {
 
     //检出代码
     public String diff() throws IOException, InterruptedException {
-        ProcessBuilder logProcessBuilder = new ProcessBuilder("git", "log", "-1", "--pretty==format=%H");
+        ProcessBuilder logProcessBuilder = new ProcessBuilder("git", "log", "-1", "--pretty=format:%H");
         logProcessBuilder.directory(new File("."));
         Process logProcess = logProcessBuilder.start();
 
