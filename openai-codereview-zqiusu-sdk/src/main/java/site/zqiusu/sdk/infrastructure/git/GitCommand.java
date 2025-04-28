@@ -70,16 +70,17 @@ public class GitCommand {
     }
 
     //提交并推送
-    public String commitAndPush(String recommend) throws GitAPIException, IOException {
+    public String commitAndPush(String recommend) throws GitAPIException, IOException {\
+        //先把远程仓库克隆到本地仓库
         Git git = Git.cloneRepository()
                 .setURI(githubReviewLogUri+".git")
-                .setDirectory(new File("."))
+                .setDirectory(new File("repo"))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,""))
                 .call();
 
         //创建分支
         String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        File dateFolder = new File("./" + dateFolderName);
+        File dateFolder = new File("repo/" + dateFolderName);
         if(!dateFolder.exists()){
             dateFolder.mkdirs();
         }
