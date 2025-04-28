@@ -28,6 +28,15 @@ public class GitCommand {
     //消息
     private final String message;
 
+    public GitCommand(String message, String author, String branch, String project, String githubToken, String githubReviewLogUri) {
+        this.message = message;
+        this.author = author;
+        this.branch = branch;
+        this.project = project;
+        this.githubToken = githubToken;
+        this.githubReviewLogUri = githubReviewLogUri;
+    }
+
     //检出代码
     public String diff() throws IOException, InterruptedException {
         ProcessBuilder logProcessBuilder = new ProcessBuilder("git", "log", "-1", "--pretty==format=%H");
