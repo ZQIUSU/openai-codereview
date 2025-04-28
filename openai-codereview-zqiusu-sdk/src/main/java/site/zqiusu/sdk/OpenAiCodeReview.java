@@ -36,12 +36,12 @@ public class OpenAiCodeReview {
 
     public static void main(String[] args) throws Exception {
         GitCommand gitCommand = new GitCommand(
-                getEnv("GITHUB_REVIEW_LOG_URI"),
-                getEnv("GITHUB_TOKEN"),
-                getEnv("COMMIT_PROJECT"),
-                getEnv("COMMIT_BRANCH"),
+                getEnv("COMMIT_MESSAGE"),
                 getEnv("COMMIT_AUTHOR"),
-                getEnv("COMMIT_MESSAGE")
+                getEnv("COMMIT_BRANCH"),
+                getEnv("COMMIT_PROJECT"),
+                getEnv("GITHUB_TOKEN"),
+                getEnv("GITHUB_REVIEW_LOG_URI")
         );
 
 
