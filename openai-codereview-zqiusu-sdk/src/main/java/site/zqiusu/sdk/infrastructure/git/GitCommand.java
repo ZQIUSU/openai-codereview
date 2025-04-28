@@ -73,13 +73,13 @@ public class GitCommand {
     public String commitAndPush(String recommend) throws GitAPIException, IOException {
         Git git = Git.cloneRepository()
                 .setURI(githubReviewLogUri+".git")
-                .setDirectory(new File("repo"))
+                .setDirectory(new File("."))
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,""))
                 .call();
 
         //创建分支
         String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        File dateFolder = new File("repo/" + dateFolderName);
+        File dateFolder = new File("./" + dateFolderName);
         if(!dateFolder.exists()){
             dateFolder.mkdirs();
         }
