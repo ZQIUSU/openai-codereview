@@ -38,7 +38,7 @@ public abstract class AbstractOpenAICodeReviewService implements IOpenAICodeRevi
         }
     }
 
-    protected abstract void pushMessage(String logUrl);
+    protected abstract void pushMessage(String logUrl) throws Exception;
 
     protected abstract String recordCodeReview(String recommend) throws GitAPIException, IOException;
 

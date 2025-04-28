@@ -14,7 +14,12 @@ public class TemplateMessageDTO {
     private String url = "https://github.com/ZQIUSU/openai-codereview-log/blob/main/2025-04-15/EACOCVWNCBAP.md";
     private Map<String, Map<String, String>> data = new HashMap<>();
 
-    public static void put(Map<String,Map<String ,String >> data, TemplateKey key,String value){
+    public TemplateMessageDTO(String touser, String template_id) {
+        this.touser = touser;
+        this.template_id = template_id;
+    }
+
+    public static void put(Map<String,Map<String ,String >> data, TemplateKey key, String value){
         data.put(key.getCode(),new HashMap<String ,String >() {
             {
                 put("value",value);

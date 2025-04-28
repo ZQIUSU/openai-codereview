@@ -9,9 +9,12 @@ import site.zqiusu.sdk.infrastructure.openai.IOpenAI;
 import site.zqiusu.sdk.infrastructure.openai.dto.ChatCompletionRequestDTO;
 import site.zqiusu.sdk.infrastructure.openai.dto.ChatCompletionSyncResponseDTO;
 import site.zqiusu.sdk.infrastructure.weixin.WeiXin;
+import site.zqiusu.sdk.infrastructure.weixin.dto.TemplateMessageDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class OpenAICodeReviewService extends AbstractOpenAICodeReviewService {
 
@@ -47,8 +50,13 @@ public class OpenAICodeReviewService extends AbstractOpenAICodeReviewService {
     }
 
     @Override
-    protected void pushMessage(String logUrl) {
-
+    protected void pushMessage(String logUrl) throws Exception {
+        Map<String , Map<String ,String >> data = new HashMap<>();
+        TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.REPO_NAME, gitCommand.getProject());
+        TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.BRANCH_NAME, gitCommand.getBranch());
+        TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.COMMIT_AUTHOR, gitCommand.getAuthor());
+        TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.COMMIT_MESSAGE, gitCommand.getMessage());
+        weiXin.sendTemplateMessage(logUrl,data);
     }
 
 
