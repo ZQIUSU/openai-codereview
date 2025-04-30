@@ -13,6 +13,8 @@ public class ApiTest {
     @Test
     public void test() throws IOException, InterruptedException {
         System.out.println("1");
+        System.out.println("2");
+
 
     }
 
