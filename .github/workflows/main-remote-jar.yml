@@ -26,7 +26,10 @@ jobs:
           java-version: '11'
 
       - name: Create new folder
-        run:
+        run: mkdir -p ./libs
+
+      - name: Download openai-code-review-sdk JAR
+        run: wget -O ./libs/openai-codereview-sdk-1.0.jar https://github.com/ZQIUSU/openai-codereview/releases/download/v1.0/openai-codereview-zqiusu-sdk-1.0.jar
 
       - name: Get repository name
         id: repo-name
