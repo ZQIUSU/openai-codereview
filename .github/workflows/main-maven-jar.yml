@@ -3,10 +3,10 @@ name: Build and Run OpenAiCodeReview By Github Action
 on:
   push:
     branches:
-      - '*'
+      - '*'-close
   pull_request:
     branches:
-      - '*'
+      - '*'-close
 
 
 jobs:
