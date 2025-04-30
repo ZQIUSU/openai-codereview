@@ -92,7 +92,7 @@ public class GitCommand {
         };
 
         //提交内容
-        git.add().addFilepattern(dateFolderName + "/" + fileName);
+        git.add().addFilepattern(dateFolderName + "/" + fileName).call();
         git.commit().setMessage("add code review new file" + fileName).call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,"")).call();
 
