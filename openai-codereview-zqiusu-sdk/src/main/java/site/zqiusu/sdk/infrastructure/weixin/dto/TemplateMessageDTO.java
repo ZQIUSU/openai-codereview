@@ -9,9 +9,8 @@ import java.util.Map;
 
 @Data
 public class TemplateMessageDTO {
-    private String touser = "omADk6tkNC439hXDMlSgf-3ESlrU";
-    private String template_id = "zNFIcuyQUntcHQTXFbFD655gKuAdAIEcmLtXMXskyDQ";
-    private String url = "https://github.com/ZQIUSU/openai-codereview-log/blob/main/2025-04-15/EACOCVWNCBAP.md";
+    private String touser ;
+    private String template_id ;
     private Map<String, Map<String, String>> data = new HashMap<>();
 
     public TemplateMessageDTO(String touser, String template_id) {

@@ -70,7 +70,7 @@ public class GitCommand {
     }
 
     //提交并推送
-    public String commitAndPush(String recommend) throws GitAPIException, IOException {\
+    public String commitAndPush(String recommend) throws GitAPIException, IOException {
         //先把远程仓库克隆到本地仓库
         Git git = Git.cloneRepository()
                 .setURI(githubReviewLogUri+".git")

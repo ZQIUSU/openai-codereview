@@ -56,6 +56,7 @@ public class OpenAICodeReviewService extends AbstractOpenAICodeReviewService {
         TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.BRANCH_NAME, gitCommand.getBranch());
         TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.COMMIT_AUTHOR, gitCommand.getAuthor());
         TemplateMessageDTO.put(data,TemplateMessageDTO.TemplateKey.COMMIT_MESSAGE, gitCommand.getMessage());
+        System.out.println(data);
         weiXin.sendTemplateMessage(logUrl,data);
     }
 
