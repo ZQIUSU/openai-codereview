@@ -11,6 +11,7 @@ import java.util.Map;
 public class TemplateMessageDTO {
     private String touser ;
     private String template_id ;
+    private String url;
     private Map<String, Map<String, String>> data = new HashMap<>();
 
     public TemplateMessageDTO(String touser, String template_id) {
