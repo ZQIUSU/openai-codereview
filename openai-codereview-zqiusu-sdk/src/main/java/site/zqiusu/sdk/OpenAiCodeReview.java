@@ -35,6 +35,7 @@ public class OpenAiCodeReview {
 
 
     public static void main(String[] args) throws Exception {
+        //初始化GitCommand对象
         GitCommand gitCommand = new GitCommand(
                 getEnv("COMMIT_MESSAGE"),
                 getEnv("COMMIT_AUTHOR"),
@@ -57,7 +58,7 @@ public class OpenAiCodeReview {
         openAICodeReviewService.exec();
     }
 
-
+    //
     private static String getEnv(String key) {
         String value = System.getenv(key);
         if (null == value || value.isEmpty()) {

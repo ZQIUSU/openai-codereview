@@ -1,18 +1,20 @@
+#整个GithubAction工作流的名字
 name: Build and Run OpenAiCodeReview By Github Action
 
+#在push操作和pull request操作的时候会触发以下的动作
+#branch代表具体处理哪些分支的时候会触发下列动作，'*'代表任何分支，所以这段意思就是推送代码的时候会触发。
 on:
   push:
     branches:
       - '*'
-  pull_request:
-    branches:
-      - '*'
 
-
+#jobs定义任务，runs on表示用github action上的最新版ubuntu环境
 jobs:
   build:
     runs-on: ubuntu-latest
 
+#这两个，第一个是检出代码，使用官方插件checkout的@v2版本，fetch-depth代表深度为2，也就是允许检出的最大深度是最近两次提交
+#第二个是设置java开发环境
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -25,12 +27,15 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
+#创建一个文件夹，-p确保存在，不存在就创建，位置在当前位置创建一个子文件夹libs
       - name: Create new folder
         run: mkdir -p ./libs
 
+#从给定url下载jar包到刚才的文件夹
       - name: Download openai-code-review-sdk JAR
         run: wget -O ./libs/openai-codereview-sdk-1.0.jar https://github.com/ZQIUSU/openai-codereview-log/releases/download/v1.0/openai-codereview-zqiusu-sdk-1.0.jar
 
+#这四个操作是获取仓库的信息比如仓库名字，分支名称，作者，提交信息，然后写入到github的文件
       - name: Get repository name
         id: repo-name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
@@ -47,6 +52,7 @@ jobs:
         id: commit-message
         run: echo "COMMIT_MESSAGE=$(git log -1 --pretty=format:'%s')" >> $GITHUB_ENV
 
+#输出这四个信息，应该是类似于测试
       - name: Print repository, branch name, commit author, and commit message
         run: |
           echo "Repository name is ${{ env.REPO_NAME }}"
@@ -54,21 +60,19 @@ jobs:
           echo "Commit author is ${{ env.COMMIT_AUTHOR }}"
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
 
+#运行代码
       - name: Run code Review
         run: java -jar ./libs/openai-codereview-sdk-1.0.jar
         env:
-          # Github 配置；GITHUB_REVIEW_LOG_URI「https://github.com/xfg-studio-project/openai-code-review-log」、GITHUB_TOKEN「https://github.com/settings/tokens」
           GITHUB_REVIEW_LOG_URI: ${{ secrets.CODE_REVIEW_LOG_URI }}
           GITHUB_TOKEN: ${{ secrets.CODE_TOKEN }}
           COMMIT_PROJECT: ${{ env.REPO_NAME }}
           COMMIT_BRANCH: ${{ env.BRANCH_NAME }}
           COMMIT_AUTHOR: ${{ env.COMMIT_AUTHOR }}
           COMMIT_MESSAGE: ${{ env.COMMIT_MESSAGE }}
-          # 微信配置 「https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index」
           WEIXIN_APPID: ${{ secrets.WEIXIN_APPID }}
           WEIXIN_SECRET: ${{ secrets.WEIXIN_SECRET }}
           WEIXIN_TOUSER: ${{ secrets.WEIXIN_TOUSER }}
           WEIXIN_TEMPLATE_ID: ${{ secrets.WEIXIN_TEMPLATE_ID }}
-          # OpenAi - ChatGLM 配置「https://open.bigmodel.cn/api/paas/v4/chat/completions」、「https://open.bigmodel.cn/usercenter/apikeys」
           CHATGLM_APIHOST: ${{ secrets.CHATGLM_APIHOST }}
           CHATGLM_APIKEYSECRET: ${{ secrets.CHATGLM_APIKEYSECRET }}
