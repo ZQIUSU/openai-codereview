@@ -35,7 +35,7 @@ jobs:
       - name: Download openai-code-review-sdk JAR
         run: wget -O ./libs/openai-codereview-sdk-1.0.jar https://github.com/ZQIUSU/openai-codereview-log/releases/download/v1.0/openai-codereview-zqiusu-sdk-1.0.jar
 
-#这四个操作是获取仓库的信息比如仓库名字，分支名称，作者，提交信息，然后写入到github的文件
+#这四个操作是获取仓库的信息比如仓库名字，分支名称，作者，提交信息，然后写入到Github Action的全局变量中
       - name: Get repository name
         id: repo-name
         run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
@@ -60,7 +60,7 @@ jobs:
           echo "Commit author is ${{ env.COMMIT_AUTHOR }}"
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
 
-#运行代码
+#运行代码，并将Github Action中设置的8个环境变量和写入的4个变量传递到Java进程的环境变量中，后边直接通过程序入口的getEnv来引入
       - name: Run code Review
         run: java -jar ./libs/openai-codereview-sdk-1.0.jar
         env:

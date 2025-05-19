@@ -1,5 +1,10 @@
 package site.zqiusu.sdk.domain.model;
 
+
+/**
+ * 这个文件主要是用于Http请求构造必要的参数Model，所以大部分都是小傅哥科普的没用，
+ * 有用的就这个GLM_4_FLASH的code也就是这个字符串"glm-4-flash"，模型是免费的，用于测试很友好
+ */
 public enum Model {
 
     @Deprecated
