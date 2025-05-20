@@ -39,6 +39,8 @@ public class GitCommand {
 
     //检出代码
     public String diff() throws IOException, InterruptedException {
+
+        //git log -1 操作表示查看最近的一次提交，后边是格式化输出，意思是只输出最后一次提交的哈希值
         ProcessBuilder logProcessBuilder = new ProcessBuilder("git", "log", "-1", "--pretty=format:%H");
         logProcessBuilder.directory(new File("."));
         Process logProcess = logProcessBuilder.start();
@@ -46,12 +48,15 @@ public class GitCommand {
         BufferedReader reader = new BufferedReader(new InputStreamReader(logProcess.getInputStream()));
         String latestCommitHash = reader.readLine();
         reader.close();
+        //等待这个操作进行完再进行下列操作
         logProcess.waitFor();
 
+        //检出最近两次提交代码的差异
         ProcessBuilder diffProcessBuilder = new ProcessBuilder("git", "diff", latestCommitHash + "^", latestCommitHash);
         diffProcessBuilder.directory(new File("."));
         Process diffProcess = diffProcessBuilder.start();
 
+        //因为这个输出肯定不止一行，就用StringBuilder来构造一下
         StringBuilder diffCode = new StringBuilder();
         BufferedReader diffReader = new BufferedReader(new InputStreamReader(diffProcess.getInputStream()));
         String line;
@@ -60,6 +65,7 @@ public class GitCommand {
         }
         diffReader.close();
 
+        //这个是判断异常码的，如果正常返回就会返回0
         int exitCode = diffProcess.waitFor();
         if (exitCode != 0) {
             throw new RuntimeException("Failed to diff, exit code:" + exitCode);
@@ -78,26 +84,31 @@ public class GitCommand {
                 .setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,""))
                 .call();
 
-        //创建分支
+        //创建一个文件夹，用于存放当天的代码评审结果，如果文件夹存在，不做操作，不存在再创建，目的是如果一天有多个提交，防止创建重复文件夹
         String dateFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         File dateFolder = new File("repo/" + dateFolderName);
         if(!dateFolder.exists()){
             dateFolder.mkdirs();
         }
 
+        //在文件夹下创建文件
         String fileName =project + "-" +branch+"-"+author+System.currentTimeMillis()+".md";
         File newFile  = new File(dateFolder,fileName);
+        //try-with-source 用于自动管理资源，避免内存泄漏
         try(FileWriter writer = new FileWriter(newFile)){
             writer.write(recommend);
         };
 
-        //提交内容
+        //提交内容，当时上课时候听傅哥说这个是模拟提交代码的操作，也就是本地提交
         git.add().addFilepattern(dateFolderName + "/" + fileName).call();
+        //写提交的message
         git.commit().setMessage("add code review new file" + fileName).call();
+        //推送
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubToken,"")).call();
 
         logger.info("openai-code-review git commit and push done! {}", fileName);
 
+         //返回拼接后的url，直接具体到文件
         return githubReviewLogUri + "/tree/main/" + dateFolderName + "/" + fileName;
     }
 }

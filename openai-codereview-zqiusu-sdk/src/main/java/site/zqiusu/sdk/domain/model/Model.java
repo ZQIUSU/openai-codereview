@@ -1,5 +1,6 @@
 package site.zqiusu.sdk.domain.model;
 
+import lombok.Getter;
 
 /**
  * 这个文件主要是用于Http请求构造必要的参数Model，所以大部分都是小傅哥科普的没用，
@@ -26,20 +27,13 @@ public enum Model {
     GLM_4_FLASH("glm-4-flash","适用简单任务，速度最快，价格最实惠的版本，具有128k上下文"),
     COGVIEW_3("cogview-3","根据用户的文字描述生成图像,使用同步调用方式请求接口"),
     ;
+    @Getter
     private final String code;
     private final String info;
 
     Model(String code, String info) {
         this.code = code;
         this.info = info;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getInfo() {
-        return info;
     }
 
 }

@@ -25,8 +25,10 @@ public class ChatGLM implements IOpenAI {
 
     @Override
     public ChatCompletionSyncResponseDTO completions(ChatCompletionRequestDTO requestDTO) throws Exception {
+        //这个BearerTokenUtils是处理OpenAI网站的apikey的，token只是apikey的一部分，具体操作是把token从apikey中取出来
         String token = BearerTokenUtils.getToken(apiKeySecret);
 
+        //构造url，构造http请求
         URL url = new URL(apiHost);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
@@ -35,12 +37,13 @@ public class ChatGLM implements IOpenAI {
         connection.setRequestProperty("User-Agent","Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
         connection.setDoOutput(true);
 
-
+        //发送请求
         try(OutputStream os = connection.getOutputStream()){
             byte[] input = JSON.toJSONString(requestDTO).getBytes(StandardCharsets.UTF_8);
             os.write(input,0, input.length);
         }
 
+        //接收消息
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         String inputLine;
         StringBuilder content = new StringBuilder();

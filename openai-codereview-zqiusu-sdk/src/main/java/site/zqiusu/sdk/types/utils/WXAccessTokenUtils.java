@@ -21,6 +21,7 @@ public class WXAccessTokenUtils {
 
     public static String getAccessToken(String appId,String appSecret){
         try{
+            //构造自己需要的字符串urlString，appId和appSecret都是传进来的，下边一样，就是发请求，接收到的消息写到sb里，然后转为Token类型，只取access_token
             String urlString = String.format(URL_TEMPLATE,GRANT_TYPE,appId,appSecret);
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

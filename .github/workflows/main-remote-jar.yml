@@ -1,20 +1,20 @@
-#整个GithubAction工作流的名字
+#定义整个GithubAction工作流的名字，在Github Action可以看到
 name: Build and Run OpenAiCodeReview By Github Action
 
-#在push操作和pull request操作的时候会触发以下的动作
-#branch代表具体处理哪些分支的时候会触发下列动作，'*'代表任何分支，所以这段意思就是推送代码的时候会触发。
+#在对Git仓库进行操作的时候会触发这个文件的行为，在本项目选择的是push，也就是Git仓库收到本地推送的代码就会触发
+#branches表示被操作分支，我们可以指定哪个分支，在这里我填的'*'也就是任何分支被推送就会触发
 on:
   push:
     branches:
       - '*'
 
-#jobs定义任务，runs on表示用github action上的最新版ubuntu环境
+#该语句表示在Github Action的虚拟机上使用哪个系统运行本项目
 jobs:
   build:
     runs-on: ubuntu-latest
 
 #这两个，第一个是检出代码，使用官方插件checkout的@v2版本，fetch-depth代表深度为2，也就是允许检出的最大深度是最近两次提交
-#第二个是设置java开发环境
+#第二个是设置JDK版本
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -27,11 +27,11 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
 
-#创建一个文件夹，-p确保存在，不存在就创建，位置在当前位置创建一个子文件夹libs
+#创建一个文件夹，-p确保存在，不存在就创建，目的是在当前位置创建一个子文件夹libs
       - name: Create new folder
         run: mkdir -p ./libs
 
-#从给定url下载jar包到刚才的文件夹
+#从给定url下载jar包到刚才的文件夹，需要注意的是提前把项目的jar包打下来，上传到这里，本文中选的是github仓库的release中，项目必须是public，否则他这个虚拟机访问不了，下载不了
       - name: Download openai-code-review-sdk JAR
         run: wget -O ./libs/openai-codereview-sdk-1.0.jar https://github.com/ZQIUSU/openai-codereview-log/releases/download/v1.0/openai-codereview-zqiusu-sdk-1.0.jar
 
@@ -60,7 +60,7 @@ jobs:
           echo "Commit author is ${{ env.COMMIT_AUTHOR }}"
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
 
-#运行代码，并将Github Action中设置的8个环境变量和写入的4个变量传递到Java进程的环境变量中，后边直接通过程序入口的getEnv来引入
+#运行刚才下载的jar包，并将Github Action中设置的8个环境变量和写入的4个变量传递到Java进程的环境变量中，后边直接通过程序入口的getEnv来引入
       - name: Run code Review
         run: java -jar ./libs/openai-codereview-sdk-1.0.jar
         env:

@@ -34,10 +34,10 @@ public class BearerTokenUtils {
      * @return Token
      */
     public static String getToken(String apiKey, String apiSecret) {
-        // 缓存Token
+        // 缓存Token，如果apikey存在，也就是缓存过了，直接返回就好了
         String token = cache.getIfPresent(apiKey);
         if (null != token) return token;
-        // 创建Token
+        // 创建Token，后边一堆在加密把，我也不太懂。。总之就是把apikeySecret的后边这一段也就是token取出来
         Algorithm algorithm = Algorithm.HMAC256(apiSecret.getBytes(StandardCharsets.UTF_8));
         Map<String, Object> payload = new HashMap<>();
         payload.put("api_key", apiKey);
